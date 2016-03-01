@@ -1,0 +1,57 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+The `commarobust` pacakge does two things: 
+
+1. With the `commarobust()` function, you can easily estimate robust standard errors on your model objects. Almost as easy as Stata!
+
+2. You can easily prepare your standard errors for inclusion in a stargazer table with `makerobustseslist()`. I'm open to better names for this function.
+
+Install from Github!
+
+```{r,eval=FALSE}
+install.packages("devtools")
+devtools::install_github("acoppock/commarobust")
+```
+
+Check it out:
+
+```{r}
+library(commarobust)
+library(randomizr) # For easy random assignments
+Z <- complete_ra(100)
+Y <- 5 + 10*Z + rnorm(100)
+fit <- lm(Y ~ Z)
+commarobust(fit)
+```
+
+And now in Stargazer. See how the intercept doesn't have stars even though the control group mean is statistically significantly larger than zero? Nice!
+
+```{r, message=FALSE, results='asis'}
+library(stargazer)
+Z_1 <- complete_ra(100)
+Y_1 <- 10 + 5*Z_1 + rnorm(100)
+Z_2 <- complete_ra(100)
+Y_2 <- 10 + 2*Z_2 + rnorm(100)
+
+fit_1 <- lm(Y_1 ~ Z_1)
+fit_2 <- lm(Y_2 ~ Z_2)
+
+stargazer(fit_1, fit_2,
+          se = makerobustseslist(fit_1, fit_2),
+          p = makerobustpslist(fit_1, fit_2), type = "html")
+```
+
