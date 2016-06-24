@@ -53,6 +53,8 @@ se_mean <- function(x, na.rm = FALSE){
 #'
 commarobust <- function(fit, cluster = NULL, type="HC2"){
   if(is.null(cluster)){
+    # IMPLEMENT https://github.com/kolesarm/Robust-Small-Sample-Standard-Errors
+
     return_obj <- lmtest::coeftest(fit,sandwich::vcovHC(fit, type=type))[]
   }else{
     M <- length(unique(cluster))

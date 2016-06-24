@@ -9,6 +9,8 @@ test_that("commarobust works", {
   Z <- complete_ra(100)
   fit <- lm(Y ~ Z)
 
+  lmtest::coeftest(fit,sandwich::vcovHC(fit, type="HC2"))[]
+
   commarobust(fit)
 
   # Clustered
