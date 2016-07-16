@@ -28,8 +28,9 @@ se_mean <- function(x, na.rm = FALSE){
 #' Title
 #'
 #' @param fit A model object, typically created by lm, glm, or many other model fitting functions.
-#' @param cluster An optional numeric vector of length N that describes the clusters that units are in. May not include NAs. Is NULL by default. If specified, cluster-robust standard errors will be estimated.
-#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if cluster is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
+#' @param clust_var An optional numeric vector of length N that describes the clusters that units are in. May not include NAs. Is NULL by default. If specified, cluster-robust standard errors will be estimated.
+#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if clust_var is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
+#' @param alpha Used for construction of (1 - alpha) confidence intervals. Defaults to 0.05.
 #'
 #' @return A matrix of coefficients, standard errors, t-statistics, and p-values
 #' @export
@@ -45,25 +46,46 @@ se_mean <- function(x, na.rm = FALSE){
 #'
 #' # Clustered
 #' Y <- rnorm(100)
-#' clust <- rep(letters[1:10], 10)
-#' Z <- cluster_ra(clust)
+#' clust_var <- rep(letters[1:10], 10)
+#' Z <- cluster_ra(clust_var = clust_var)
 #'
 #' fit <- lm(Y ~ Z)
-#' commarobust(fit, cluster = clust)
+#' commarobust(fit, clust_var = clust_var)
 #'
-commarobust <- function(fit, cluster = NULL, type="HC2"){
-  if(is.null(cluster)){
-    # IMPLEMENT https://github.com/kolesarm/Robust-Small-Sample-Standard-Errors
+commarobust <- function(fit, clust_var = NULL, type = "HC2", alpha = 0.05){
 
-    return_obj <- lmtest::coeftest(fit,sandwich::vcovHC(fit, type=type))[]
+  if(type == "BM"){
+
+    bm <- BMlmSE(fit = fit, clust_var = clust_var)
+    point_estimates <- coef(fit)
+    critical_values <- qt(1 - alpha/2, df = bm$dof)  # Critical value for 95% CI
+    margins_of_error <- critical_values * bm$se
+    ps <- 2 * pt(q = abs(point_estimates)/bm$se, bm$dof, lower.tail = FALSE)
+    ci_lower = point_estimates - margins_of_error
+    ci_upper = point_estimates + margins_of_error
+
+    return_obj <-
+      cbind("Estimate" = point_estimates,
+            `Std. Error` = bm$se,
+            `t value` = point_estimates/bm$se,
+            `Pr(>|t|)` = ps,
+            "ci_lower" = ci_lower,
+            "ci_upper" = ci_upper,
+            "dof" = bm$dof,
+            "critical_value" = critical_values
+      )
   }else{
-    M <- length(unique(cluster))
-    N <- length(cluster)
-    K <- fit$rank
-    dfc <- (M/(M-1))*((N-1)/(N-K))
-    uj  <- apply(sandwich::estfun(fit),2, function(x) tapply(x, cluster, sum));
-    vcovCL <- dfc*sandwich::sandwich(fit, meat=crossprod(uj)/N)
-    return_obj <- lmtest::coeftest(fit, vcovCL)[]
+    if(is.null(clust_var)){
+      return_obj <- lmtest::coeftest(fit,sandwich::vcovHC(fit, type=type))[]
+    }else{
+      M <- length(unique(clust_var))
+      N <- length(clust_var)
+      K <- fit$rank
+      dfc <- (M/(M-1))*((N-1)/(N-K))
+      uj  <- apply(sandwich::estfun(fit),2, function(x) tapply(x, clust_var, sum));
+      vcovCL <- dfc*sandwich::sandwich(fit, meat=crossprod(uj)/N)
+      return_obj <- lmtest::coeftest(fit, vcovCL)[]
+    }
   }
   attr(return_obj, "method") <- NULL
   return(return_obj)
@@ -87,7 +109,7 @@ getrobustps <- function(fit, type = "HC2"){
 #' This function will prepare heteroskedasticity-robust standard errors for stargazer. Currently, it does not handle cluster-robust standard errors because there is no nice way to pass model-specific vectors of clusters.
 #'
 #' @param ... a series of model fits, separated by commas
-#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if cluster is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
+#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if clust_var is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
 #'
 #' @return A list of vectors of robust standard errors.
 #' @export
@@ -118,7 +140,7 @@ makerobustseslist <- function(..., type = "HC2"){
 #' This function will prepare p-values for stargazer based on the robust standard errors. Stargazer will do this automatically, so the main purpose of this function is to set the p-value of the intercept to 1. In experimental research, the intercept is often the sample mean for the control group and a test of the null hypothesis that it is equal to do is silly to report.
 #'
 #' @param ... a series of model fits, separated by commas
-#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if cluster is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
+#' @param type A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if clust_var is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).
 #'
 #' @return A list of vectors of robust standard errors.
 #' @export

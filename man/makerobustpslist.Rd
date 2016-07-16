@@ -9,7 +9,7 @@ makerobustpslist(..., type = "HC2")
 \arguments{
 \item{...}{a series of model fits, separated by commas}
 
-\item{type}{A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if cluster is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).}
+\item{type}{A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if clust_var is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).}
 }
 \value{
 A list of vectors of robust standard errors.

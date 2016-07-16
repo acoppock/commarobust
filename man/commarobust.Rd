@@ -4,14 +4,16 @@
 \alias{commarobust}
 \title{Title}
 \usage{
-commarobust(fit, cluster = NULL, type = "HC2")
+commarobust(fit, clust_var = NULL, type = "bm", alpha = 0.05)
 }
 \arguments{
 \item{fit}{A model object, typically created by lm, glm, or many other model fitting functions.}
 
-\item{cluster}{An optional numeric vector of length N that describes the clusters that units are in. May not include NAs. Is NULL by default. If specified, cluster-robust standard errors will be estimated.}
+\item{clust_var}{An optional numeric vector of length N that describes the clusters that units are in. May not include NAs. Is NULL by default. If specified, cluster-robust standard errors will be estimated.}
 
-\item{type}{A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if cluster is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).}
+\item{type}{A string indicating the type of heterskedasticty-robust standard errors to be estimated. Is ignored if clust_var is specificed. Is "HC2" by default, because these are equivalent to Neyman standard errors (See Aronow and Samii).}
+
+\item{alpha}{Used for construction of (1 - alpha) confidence intervals. Defaults to 0.05.}
 }
 \value{
 A matrix of coefficients, standard errors, t-statistics, and p-values
@@ -30,11 +32,11 @@ commarobust(fit)
 
 # Clustered
 Y <- rnorm(100)
-clust <- rep(letters[1:10], 10)
-Z <- cluster_ra(clust)
+clust_var <- rep(letters[1:10], 10)
+Z <- cluster_ra(clust_var = clust_var)
 
 fit <- lm(Y ~ Z)
-commarobust(fit, cluster = clust)
+commarobust(fit, clust_var = clust_var)
 
 }
 

@@ -5,13 +5,34 @@ test_that("commarobust works", {
 
   library(randomizr)
 
-  Y <- rnorm(100)
-  Z <- complete_ra(100)
-  fit <- lm(Y ~ Z)
+  N <- 1000
 
-  lmtest::coeftest(fit,sandwich::vcovHC(fit, type="HC2"))[]
+  Z <- complete_ra(N)
+  X <- rnorm(N)
+  X_c <- X - mean(X)
+  Y <- rnorm(N) + .5*Z + .4*X
 
-  commarobust(fit)
+
+  fit <- lm(Y ~ Z*X_c)
+
+  predict.lm(fit, newdata = data.frame(Z = 1, X_c = 0)) -
+
+  BMlmSE(fit, ell = c(0, 1, 0, 0))
+
+  predict.lm(fit, newdata = data.frame(Z = 0, X_c = 0))
+
+
+  fit_1 <- lm(Y ~ Z)
+  fit_2 <- lm(Y ~ 1, subset = Z ==1)
+  fit_3 <- lm(Y ~ 1, subset = Z ==0)
+
+  commarobust(fit_1)
+  commarobust(fit_2)
+  commarobust(fit_3)
+
+  0.2191377
+
+  sqrt(0.1639704^2 + 0.1453789^2)
 
   # Clustered
   Y <- rnorm(100)
