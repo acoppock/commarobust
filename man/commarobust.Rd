@@ -4,7 +4,7 @@
 \alias{commarobust}
 \title{Title}
 \usage{
-commarobust(fit, clust_var = NULL, type = "bm", alpha = 0.05)
+commarobust(fit, clust_var = NULL, type = "HC2", alpha = 0.05)
 }
 \arguments{
 \item{fit}{A model object, typically created by lm, glm, or many other model fitting functions.}
@@ -39,4 +39,3 @@ fit <- lm(Y ~ Z)
 commarobust(fit, clust_var = clust_var)
 
 }
-

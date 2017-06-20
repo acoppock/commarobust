@@ -34,4 +34,3 @@ stargazer(fit_1, fit_2,
           p = makerobustpslist(fit_1, fit_2))
 
 }
-

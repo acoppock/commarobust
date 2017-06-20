@@ -26,4 +26,3 @@ Compute Bell-McCaffrey Standard Errors
 rnorm(1)
 
 }
-

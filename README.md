@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 The `commarobust` pacakge does two things:
 
@@ -17,13 +18,14 @@ Check it out:
 ``` r
 library(commarobust)
 library(randomizr) # For easy random assignments
+#> Warning: package 'randomizr' was built under R version 3.3.2
 Z <- complete_ra(100)
 Y <- 5 + 10*Z + rnorm(100)
 fit <- lm(Y ~ Z)
 commarobust(fit)
-#>              Estimate Std. Error  t value     Pr(>|t|)
-#> (Intercept)  4.797376  0.1349279 35.55510 8.201968e-58
-#> Z           10.290971  0.2028367 50.73526 3.696001e-72
+#>             Estimate Std. Error  t value     Pr(>|t|)
+#> (Intercept) 4.974138  0.1288141 38.61487 4.288597e-61
+#> Z           9.895836  0.1760231 56.21898 2.205189e-76
 ```
 
 And now in Stargazer. See how the intercept doesn't have stars even though the control group mean is statistically significantly larger than zero? Nice!
@@ -90,7 +92,7 @@ Y\_2
 Z\_1
 </td>
 <td>
-5.407<sup>\*\*\*</sup>
+4.540<sup>\*\*\*</sup>
 </td>
 <td>
 </td>
@@ -99,7 +101,7 @@ Z\_1
 <td style="text-align:left">
 </td>
 <td>
-(0.206)
+(0.193)
 </td>
 <td>
 </td>
@@ -119,7 +121,7 @@ Z\_2
 <td>
 </td>
 <td>
-1.899<sup>\*\*\*</sup>
+1.966<sup>\*\*\*</sup>
 </td>
 </tr>
 <tr>
@@ -128,7 +130,7 @@ Z\_2
 <td>
 </td>
 <td>
-(0.207)
+(0.205)
 </td>
 </tr>
 <tr>
@@ -144,20 +146,20 @@ Z\_2
 Constant
 </td>
 <td>
-9.767
+10.275
 </td>
 <td>
-10.039
+10.190
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.150)
+(0.133)
 </td>
 <td>
-(0.151)
+(0.135)
 </td>
 </tr>
 <tr>
@@ -188,10 +190,10 @@ Observations
 R<sup>2</sup>
 </td>
 <td>
-0.875
+0.850
 </td>
 <td>
-0.463
+0.483
 </td>
 </tr>
 <tr>
@@ -199,10 +201,10 @@ R<sup>2</sup>
 Adjusted R<sup>2</sup>
 </td>
 <td>
-0.874
+0.849
 </td>
 <td>
-0.458
+0.478
 </td>
 </tr>
 <tr>
@@ -210,10 +212,10 @@ Adjusted R<sup>2</sup>
 Residual Std. Error (df = 98)
 </td>
 <td>
-1.030
+0.963
 </td>
 <td>
-1.033
+1.027
 </td>
 </tr>
 <tr>
@@ -221,10 +223,10 @@ Residual Std. Error (df = 98)
 F Statistic (df = 1; 98)
 </td>
 <td>
-688.468<sup>\*\*\*</sup>
+556.097<sup>\*\*\*</sup>
 </td>
 <td>
-84.532<sup>\*\*\*</sup>
+91.570<sup>\*\*\*</sup>
 </td>
 </tr>
 <tr>
