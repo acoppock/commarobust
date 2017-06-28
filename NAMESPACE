@@ -2,6 +2,7 @@
 
 export(BMlmSE)
 export(commarobust)
+export(commarobust_tidy)
 export(get_cis_BMlmSE)
 export(makerobustpslist)
 export(makerobustseslist)
