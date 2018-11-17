@@ -12,7 +12,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `commarobust` pacakge does two things: 
+Important!  The `commarobust` package is no longer in development. I'll leave this branch up in case folks want to still use it or have legacy code. But anything you could do in `commarobust` you can do much better in `estimatr`.
+
+The `commarobust` package does two things: 
 
 1. With the `commarobust()` function, you can easily estimate robust standard errors on your model objects. Almost as easy as Stata!
 
